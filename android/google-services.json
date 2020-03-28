@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "499990842090",
+    "firebase_url": "https://pwnd-8ec3a.firebaseio.com",
+    "project_id": "pwnd-8ec3a",
+    "storage_bucket": "pwnd-8ec3a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:499990842090:android:5c45d69255b7429a916593",
+        "android_client_info": {
+          "package_name": "com.mygdx.game"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "499990842090-484f2plq02g20l6ie6co3udlufdvdmv9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYZdBcXapieH5kHGOnyrqd1tASssUWP1w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "499990842090-484f2plq02g20l6ie6co3udlufdvdmv9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -11,9 +11,9 @@ buildscript {
     }
     dependencies {
         classpath 'org.wisepersist:gwt-gradle-plugin:1.0.9'
-        classpath 'com.android.tools.build:gradle:3.4.1'
+        classpath 'com.android.tools.build:gradle:3.6.1'
         classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.8'
-        
+        classpath 'com.google.gms:google-services:4.3.3'  // Google Services plugin
 
     }
 }
@@ -55,6 +55,7 @@ project(":desktop") {
 
 project(":android") {
     apply plugin: "android"
+    apply plugin: 'com.google.gms.google-services'  // Google Services plugin
 
     configurations { natives }
 
@@ -72,6 +73,13 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-arm64-v8a"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
+
+        // Add the Firebase SDK for Google Analytics
+        implementation 'com.google.firebase:firebase-analytics:17.2.3'
+
+        // Add the dependencies for any other Firebase products you want to use in your app
+        // For example, to also use Firebase Authentication
+        implementation 'com.google.firebase:firebase-firestore:21.4.1'
         
     }
 }
@@ -112,10 +120,8 @@ project(":html") {
 project(":core") {
     apply plugin: "java-library"
 
-
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-        
     }
 }
