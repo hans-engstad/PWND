@@ -13,6 +13,13 @@ public class Cell {
         this.key = key;
     }
 
+    public Cell(Map<String, Object> data){
+        this.key = (String) data.get("key");
+        if (data.containsKey("pawn")){
+            this.pawn = Pawn.deserialize((Map<String, Object>) data.get("pawn"));
+        }
+    }
+
     public String getKey() {
         return key;
     }
@@ -21,6 +28,9 @@ public class Cell {
         Map<String, Object> cell = new HashMap<>();
 
         cell.put("key", key);
+        if (pawn != null){
+            cell.put("pawn", pawn.serialize());
+        }
 
         return cell;
     }

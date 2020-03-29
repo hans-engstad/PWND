@@ -35,8 +35,8 @@ public class ImageElement extends BaseElement {
 
     @Override
     public void refresh(){
-        image.clear();
-        image.setDrawable(new Skin(PWND.atlas).getDrawable(spriteName));
+        // image.clear();
+        image.setDrawable(PWND.skin.getDrawable(spriteName));
         image.setSize(width, height);
         image.setPosition(xPos, yPos);
     }

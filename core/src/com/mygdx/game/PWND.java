@@ -26,7 +26,7 @@ public class PWND extends ApplicationAdapter {
 	@Override
 	public void create () {
 		atlas = new TextureAtlas("sprites.txt");
-		skin = new Skin(Gdx.files.internal("uiskin.json"));
+		skin = new Skin(atlas);
 		viewManager = new ViewManager();
 		viewManager.push(new MenuView());
 	}

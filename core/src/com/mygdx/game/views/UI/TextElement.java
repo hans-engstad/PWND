@@ -23,7 +23,7 @@ public class TextElement extends BaseElement {
         this.text = text;
 
         // Instantiate label
-        label = new Label(text, PWND.skin);
+        label = new Label(text, new Skin(Gdx.files.internal("uiskin.json")));
 
         // Set actor variable in super-class
         setActor(label);
