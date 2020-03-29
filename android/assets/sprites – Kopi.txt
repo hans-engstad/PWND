@@ -1,5 +1,5 @@
 sprites.png
-size: 685, 944
+size: 1757, 477
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
@@ -10,37 +10,30 @@ blue_big_but_frame
   orig: 585, 236
   offset: 0, 0
   index: -1
-cell
+input
   rotate: false
-  xy: 585, 0
-  size: 100, 100
-  orig: 100, 100
+  xy: 588, 236
+  size: 1025, 241
+  orig: 1025, 241
   offset: 0, 0
   index: -1
 light_blue_big_but_frame
   rotate: false
-  xy: 0, 236
+  xy: 585, 0
   size: 585, 236
   orig: 585, 236
   offset: 0, 0
   index: -1
-pawn
-  rotate: false
-  xy: 585, 236
-  size: 80, 80
-  orig: 80, 80
-  offset: 0, 0
-  index: 1
 red_big_but_frame
   rotate: false
-  xy: 0, 472
+  xy: 1170, 0
   size: 587, 236
   orig: 587, 236
   offset: 0, 0
   index: -1
 yellow_big_but_frame
   rotate: false
-  xy: 0, 708
+  xy: 0, 236
   size: 588, 236
   orig: 588, 236
   offset: 0, 0

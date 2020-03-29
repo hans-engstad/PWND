@@ -6,7 +6,7 @@ import java.util.Map;
 public class Cell {
 
 
-
+    private Pawn pawn;
     private String key;
 
     public Cell(String key){
@@ -23,6 +23,17 @@ public class Cell {
         cell.put("key", key);
 
         return cell;
+    }
+
+    public void addPawn(Pawn pawn){
+        if (pawn != null){
+            // TODO: Throw excpection here.
+        }
+        this.pawn = pawn;
+    }
+
+    public Pawn getPawn(){
+        return this.pawn;
     }
 
 

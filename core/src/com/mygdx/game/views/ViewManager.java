@@ -1,5 +1,6 @@
 package com.mygdx.game.views;
 
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.game.PWND;
 import com.mygdx.game.views.BaseView;
 
@@ -24,14 +25,9 @@ public class ViewManager {
 
     public void set(BaseView view){
         // Clear event listeners
-        PWND.firebase.clearListeners();
-        System.out.println("*******SETTING NEW VIEW----");
         views.pop().dispose();
-        System.out.println("*1");
         views.push(view);
-        System.out.println("*2");
         view.show();
-        System.out.println("*3");
     }
 
     public void render(float dt){
@@ -43,6 +39,10 @@ public class ViewManager {
         for (BaseView v : views){
             v.dispose();
         }
+    }
+
+    public BaseView peek(){
+        return views.peek();
     }
 
 }

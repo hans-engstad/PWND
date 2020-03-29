@@ -7,6 +7,7 @@ import com.mygdx.game.interfaces.IUpdateCallback;
 import com.mygdx.game.models.Match;
 import com.mygdx.game.models.Player;
 import com.mygdx.game.views.MatchSearchView;
+import com.mygdx.game.views.MatchView;
 import com.mygdx.game.views.MenuView;
 
 import java.util.Map;
@@ -19,12 +20,16 @@ public class MatchSearchController extends BaseController {
 
     MatchSearchView view;
 
+    Boolean joinMatch;
+
     public MatchSearchController(MatchSearchView view) {
         this.view = view;
 
         String username = playerPrefs.getString("username");
         String id = playerPrefs.getString("id");
         thisPlayer = new Player(username, id);
+
+        joinMatch = false;
     }
 
 
@@ -50,7 +55,8 @@ public class MatchSearchController extends BaseController {
                 if (match.getStatus() == Match.Status.STARTING){
                     // Join match by navigating to match view
                     // PWND.viewManager.set(new MatchView(match));
-                    PWND.viewManager.set(new MenuView());
+                    // PWND.viewManager.set(new MenuView());
+                    joinMatch = true;
                 }
             }
 
@@ -83,7 +89,8 @@ public class MatchSearchController extends BaseController {
                             // Join match by navigating to match view
                             Match m = MatchSearchController.this.match;
                             // PWND.viewManager.set(new MatchView(m));
-                            PWND.viewManager.set(new MenuView());
+                            // PWND.viewManager.set(new MenuView());
+                            joinMatch = true;
                         }
 
                         @Override
@@ -107,12 +114,9 @@ public class MatchSearchController extends BaseController {
         });
     }
 
-    public void dispose(){
-
+    public void update(float delta){
+        if (joinMatch){
+            PWND.viewManager.set(new MatchView(match));
+        }
     }
-
-
-
-
-
 }

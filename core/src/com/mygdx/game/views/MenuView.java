@@ -5,47 +5,51 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.mygdx.game.PWND;
 import com.mygdx.game.controllers.MenuController;
-import com.mygdx.game.views.UI.Button;
-import com.mygdx.game.views.UI.Text;
+import com.mygdx.game.views.UI.ButtonElement;
+import com.mygdx.game.views.UI.TextElement;
 
 
 public class MenuView extends BaseView {
 
     private MenuController controller;
 
+    private TextElement usernameText;
+    private ButtonElement startButton;
+    private ButtonElement editUsernameButton;
+    private Table table;
+
     public MenuView(){
         controller = new MenuController();
     }
 
     @Override
-    public void render(float delta) {
+    public void show() {
+        super.show();
 
-        // Username text
-        Text usernameText = new Text(atlas);
-        usernameText.setText(controller.getUsername());
+        usernameText = new TextElement(controller.getUsername());
 
-        // Start button
-        Button startButton = new Button(atlas);
-        startButton.setText("START");
-        startButton.get().addListener(new ChangeListener() {
+        startButton = new ButtonElement("START", new ChangeListener(){
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                System.out.println("CLICKED***");
                 controller.onStartClick();
             }
         });
 
-        // Edit username button
-        Button editUsernameButton = new Button(atlas);
-        editUsernameButton.setText("Edit username");
-        editUsernameButton.get().addListener(new ChangeListener() {
+        editUsernameButton = new ButtonElement("Edit username", new ChangeListener(){
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.input.getTextInput(new Input.TextInputListener() {
                     @Override
                     public void input (String text) {
-                        MenuView.this.controller.setUsername(text);
-                        MenuView.this.stage.clear();
+                        // Save new username
+                        controller.setUsername(text);
+
+                        // Update UI
+                        usernameText.setText(text);
+                        usernameText.refresh();
                     }
 
                     @Override
@@ -55,17 +59,14 @@ public class MenuView extends BaseView {
             }
         });
 
-        Table table = new Table();
-
-        table.add(usernameText.get());
-        table.row();
-        table.add(editUsernameButton.get());
-        table.row();
-        table.add(startButton.get());
+        table = new Table();
         table.setFillParent(true);
+        table.add(usernameText.getActor()).row();
+        table.add(editUsernameButton.getActor()).row();
+        table.add(startButton.getActor());
 
-        stage.addActor(table);
-        super.render(delta);
+        PWND.viewManager.peek().getStage().addActor(table);
+
     }
 
 

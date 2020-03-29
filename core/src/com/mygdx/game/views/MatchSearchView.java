@@ -1,13 +1,13 @@
 package com.mygdx.game.views;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.mygdx.game.PWND;
 import com.mygdx.game.controllers.MatchSearchController;
-import com.mygdx.game.models.Match;
-import com.mygdx.game.views.UI.Text;
+import com.mygdx.game.views.UI.TextElement;
 
 public class MatchSearchView extends BaseView {
 
-    private Text searchingText;
+    private TextElement searchingText;
     private Table table;
 
     private MatchSearchController controller;
@@ -20,21 +20,29 @@ public class MatchSearchView extends BaseView {
     public void show() {
         super.show();
 
-        searchingText = new Text(atlas);
-        table = new Table();
+        // Searching text
+        searchingText = new TextElement("Searching...");
 
-        searchingText.setText("Searching...");
-        table.add(searchingText.get());
+        // Table
+        table = new Table();
         table.setFillParent(true);
 
-        stage.addActor(table);
+        // Add searching text to table
+        table.add(searchingText.getActor());
 
+        // Add table to actors
+        PWND.viewManager.peek().getStage().addActor(table);
+
+        // Start searching
         controller.startSearch();
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
+
+        // Pass render call to controller
+        controller.update(delta);
     }
 
 }

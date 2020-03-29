@@ -5,24 +5,22 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public abstract class BaseView implements Screen {
 
     protected Stage stage;
-    protected TextureAtlas atlas;
     protected Preferences playerPrefs;
-
 
     @Override
     public void show() {
-
         stage = new Stage(new ScreenViewport());
-        atlas = new TextureAtlas("sprites.txt");
         playerPrefs = Gdx.app.getPreferences("player");
 
         // Set username and id if not already set
@@ -38,9 +36,17 @@ public abstract class BaseView implements Screen {
 
     @Override
     public void render(float delta) {
+        // Act
         stage.act(delta);
+
+        // Draw stage
         stage.draw();
     }
+
+    public Stage getStage(){
+        return this.stage;
+    }
+
 
     @Override
     public void resize(int width, int height) {
@@ -64,11 +70,6 @@ public abstract class BaseView implements Screen {
 
     @Override
     public void dispose() {
-        if (stage != null){
-            stage.dispose();
-        }
-        if (atlas != null){
-            atlas.dispose();
-        }
+        stage.dispose();
     }
 }

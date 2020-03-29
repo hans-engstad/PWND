@@ -1,12 +1,13 @@
 package com.mygdx.game.views.UI;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.mygdx.game.PWND;
 
-public class Button {
+public class ButtonElement extends BaseElement {
 
     public enum Type {
         BLUE,
@@ -15,8 +16,6 @@ public class Button {
         LIGHT_BLUE
     }
 
-    private TextureAtlas atlas;
-
     private float size;
     private Type type;
     private String text;
@@ -24,51 +23,60 @@ public class Button {
     private TextButton button;
     private TextButton.TextButtonStyle style;
     private BitmapFont font;
+    private ChangeListener onChange;
 
-    public Button(TextureAtlas atlas){
-        this.atlas = atlas;
 
+    public ButtonElement(String text, ChangeListener onChange){
         // Set default parameters
         this.size = 5f;
         this.type = Type.BLUE;
-        this.text = "";
+
+        // Set other variables
+        this.text = text;
+        this.onChange = onChange;
         this.font = new BitmapFont();
         this.style = new TextButton.TextButtonStyle();
-
-        update();
-    }
-
-    public TextButton get() {
-        return this.button;
-    }
-
-    public void update() {
-
         style.font = this.font;
         style.up = getSkinDrawable();
 
+        // Instantiate button
         button = new TextButton(text, style);
+
+        // Add button as actor
+        setActor(button);
+
+        // Refresh in order to update actor
+        refresh();
+    }
+
+    @Override
+    public void refresh(){
+        button.clear();
+        button.setText(text);
         button.getLabel().setFontScale(size, size);
 
+        if (onChange != null){
+            super.getActor().addListener(onChange);
+        }
+    }
+
+    public void setChangeListener(ChangeListener onChange){
+        this.onChange = onChange;
+        refresh();
     }
 
     public void setSize(float size){
         this.size = size;
-        update();
-    }
-
-    public void setType(Type type){
-        this.type = type;
-        update();
+        refresh();
     }
 
     public void setText(String text){
         this.text = text;
-        update();
+        refresh();
     }
 
     private Drawable getSkinDrawable(){
-        Skin skin = new Skin(atlas);
+        Skin skin = new Skin(PWND.atlas);
 
         if (type == Type.BLUE){
             return skin.getDrawable("blue_big_but_frame");
@@ -84,7 +92,4 @@ public class Button {
         }
         return null;
     }
-
-
-
 }

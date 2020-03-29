@@ -102,6 +102,9 @@ public class Match {
 
     }
 
+    public Lane[] getLanes() {
+        return lanes;
+    }
 
     public Map serialize(){
         Map<String, Object> match = new HashMap<>();

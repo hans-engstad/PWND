@@ -21,8 +21,12 @@ public class Lane {
         };
     }
 
-    public Cell getCells(int index){
+    public Cell getCell(int index){
         return cells[index];
+    }
+
+    public Cell[] getCells(){
+        return cells;
     }
 
     public String getKey(){

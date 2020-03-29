@@ -18,12 +18,15 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mygdx.game.interfaces.ICreateCallback;
 import com.mygdx.game.interfaces.IFirebase;
+import com.mygdx.game.interfaces.IMatchChange;
 import com.mygdx.game.interfaces.IRetrieveCallback;
 import com.mygdx.game.interfaces.IUpdateCallback;
 import com.mygdx.game.models.Match;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 
 public class Firebase implements IFirebase {
@@ -33,7 +36,7 @@ public class Firebase implements IFirebase {
 
     private FirebaseFirestore db;
 
-    ListenerRegistration matchUpdateListener;
+
 
     public Firebase(){
         db = FirebaseFirestore.getInstance();
@@ -47,7 +50,7 @@ public class Firebase implements IFirebase {
                     public void onSuccess(DocumentReference documentReference) {
                         callback.onSuccess(documentReference.getId());
 
-                        matchUpdateListener = documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>(){
+                        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>(){
                             @Override
                             public void onEvent(@Nullable DocumentSnapshot snapshot,
                                                 @Nullable FirebaseFirestoreException e) {
@@ -92,6 +95,11 @@ public class Firebase implements IFirebase {
                 });
     }
 
+    public void updateMatch(Match match){
+        db.collection(MATCHES_KEY).document(match.getId()).update(match.serialize());
+    }
+
+
     public void retrieveOpenMatches(final IRetrieveCallback callback){
         db.collection(MATCHES_KEY).whereEqualTo("status", Match.Status.OPEN.toString())
                 .get()
@@ -115,11 +123,24 @@ public class Firebase implements IFirebase {
                 });
     }
 
-    public void clearListeners (){
-        if (matchUpdateListener != null){
-            matchUpdateListener.remove();
-        }
+    public void addMatchChangeListener(final Match match, final IMatchChange callback) {
+        DocumentReference docRef = db.collection(MATCHES_KEY).document(match.getId());
+
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    // Listen failed
+                    return;
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    callback.onChange(new Match(snapshot.getData()));
+                } else {
+                    // Data is null
+                    callback.onChange(null);
+                }
+            }
+        });
     }
-
-
 }
