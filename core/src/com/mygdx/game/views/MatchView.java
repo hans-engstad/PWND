@@ -1,28 +1,15 @@
 package com.mygdx.game.views;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.mygdx.game.PWND;
 import com.mygdx.game.controllers.MatchController;
 import com.mygdx.game.models.Cell;
 import com.mygdx.game.models.Lane;
 import com.mygdx.game.models.Match;
 import com.mygdx.game.models.Pawn;
-import com.mygdx.game.models.pawns.BasicPawn;
-import com.mygdx.game.views.UI.ButtonElement;
 import com.mygdx.game.views.UI.ImageElement;
-
-import java.util.Map;
 
 public class MatchView extends BaseView {
 
@@ -30,7 +17,6 @@ public class MatchView extends BaseView {
     private final int SPAWN_PAWN_BUTTON_WIDTH = 300;
 
     private MatchController controller;
-    private Match match;
 
     private int screenWidth;
     private int screenHeight;
@@ -38,38 +24,51 @@ public class MatchView extends BaseView {
     private int cellWidth;
     private int cellHeight;
 
+    private Boolean setupComplete;
 
-    public MatchView (Match match){
-        this.match = match;
+
+    public MatchView (String matchKey){
+        controller = new MatchController(this, matchKey);
+        setupComplete = false;
     }
 
-    @Override
-    public void show(){
-        super.show();
-        controller = new MatchController(this, match);
-
+    void setup(){
         // Screen size
         screenWidth = Gdx.graphics.getWidth();
         screenHeight = Gdx.graphics.getHeight();
 
         updateCellSize();
+
+        setupComplete = true;
     }
 
     void updateCellSize(){
-        cellWidth = screenWidth / match.getLanes().length;
-        cellHeight = (screenHeight - BOTTOM_BAR_HEIGHT) / match.getLanes()[0].getCells().length;
+        cellWidth = screenWidth / controller.getMatch().getLanes().length;
+        cellHeight = (screenHeight - BOTTOM_BAR_HEIGHT) / controller.getMatch().getLanes()[0].getCells().length;
     }
 
     @Override
     public void resize(int width, int height) {
-        super.resize(width, height);
-        screenWidth = width;
-        screenHeight = height;
-        updateCellSize();
+        if (setupComplete){
+            super.resize(width, height);
+            screenWidth = width;
+            screenHeight = height;
+            updateCellSize();
+        }
     }
 
     @Override
     public void render(float delta) {
+        if (controller.getMatch() == null) {
+            return;
+        }
+        if (!setupComplete && controller.getMatch().getStatus() == Match.Status.STARTED){
+            setup();
+        }
+        if (controller.getMatch().getLanes() == null || controller.getMatch().getLanes().length == 0){
+            return;
+        }
+
         // Clear previous elements
         stage.clear();
 
@@ -85,7 +84,7 @@ public class MatchView extends BaseView {
     }
 
     void drawBoard(){
-        Lane[] lanes = match.getLanes();
+        Lane[] lanes = controller.getMatch().getLanes();
 
         for (int i = 0; i < lanes.length; i++){
             Lane lane = lanes[i];
@@ -112,7 +111,7 @@ public class MatchView extends BaseView {
     }
 
     void drawPawns(){
-        Lane[] lanes = match.getLanes();
+        Lane[] lanes = controller.getMatch().getLanes();
 
         for (int i = 0; i < lanes.length; i++){
             Lane lane = lanes[i];
@@ -182,7 +181,8 @@ public class MatchView extends BaseView {
             int y = screenHeight - Gdx.input.getY();
 
             if (x >= 0 && x <= BOTTOM_BAR_HEIGHT && y >= 0 && y <= BOTTOM_BAR_HEIGHT ){
-                controller.setSelectedPawn(new BasicPawn());
+                controller.spawnBasicPawn();
+                // controller.setSelectedPawn(new BasicPawn());
             }
 
         }
@@ -199,7 +199,7 @@ public class MatchView extends BaseView {
             if (y > BOTTOM_BAR_HEIGHT){
                 // Check which lane was clicked and select that lane
                 int laneIndex = x / cellWidth;
-                Lane laneClicked = match.getLanes()[laneIndex];
+                Lane laneClicked = controller.getMatch().getLanes()[laneIndex];
                 if (controller.getSelectedLane() == laneClicked){
                     // Lane already selected clicked, deselect lane
                     controller.setSelectedLane(null);

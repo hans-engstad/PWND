@@ -7,7 +7,7 @@ import java.util.Map;
 
 public abstract class Pawn {
 
-    enum PawnOwner {
+    public enum PawnOwner {
         MASTER,
         SLAVE
     }
@@ -32,6 +32,7 @@ public abstract class Pawn {
         if (type == Type.PAWN_1){
             return new BasicPawn(data);
         }
+
         return null;
     }
 
@@ -46,6 +47,7 @@ public abstract class Pawn {
         Map<String, Object> data = new HashMap<>();
 
         data.put("type", this.type.toString());
+        data.put("owner", this.owner.toString());
 
         return data;
     }

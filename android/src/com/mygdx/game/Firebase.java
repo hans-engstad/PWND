@@ -123,6 +123,17 @@ public class Firebase implements IFirebase {
                 });
     }
 
+    public void retrieveMatch(String key, final IRetrieveCallback callback){
+        db.collection(MATCHES_KEY).document(key)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        callback.onSuccess(documentSnapshot.getData());
+                    }
+                });
+    }
+
     public void addMatchChangeListener(final Match match, final IMatchChange callback) {
         DocumentReference docRef = db.collection(MATCHES_KEY).document(match.getId());
 

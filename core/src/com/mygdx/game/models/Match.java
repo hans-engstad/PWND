@@ -1,9 +1,11 @@
 package com.mygdx.game.models;
 
+import com.mygdx.game.models.actions.BaseAction;
 import com.mygdx.game.models.actions.IAction;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -39,11 +41,32 @@ public class Match {
     public Match(Map data){
         this.id = (String) data.get("id");
         this.masterPlayer = new Player((Map) data.get("masterPlayer"));
+        pendingActions = new Stack<>();
 
         this.status = Status.valueOf((String) data.get("status"));
 
         if (data.containsKey("slavePlayer")){
             this.slavePlayer = new Player((Map) data.get("slavePlayer"));
+        }
+
+        if (data.containsKey("masterPlayer")){
+            this.slavePlayer = new Player((Map) data.get("masterPlayer"));
+        }
+
+        if (data.containsKey("pendingActions")){
+            for (Object a : (ArrayList) data.get("pendingActions")){
+                pendingActions.push(BaseAction.deserialize((Map) a));
+            }
+        }
+
+        if (data.containsKey("lanes")){
+            this.lanes = new Lane[((Map) data.get("lanes")).size()];
+
+            int i = 0;
+            for (Object laneData : ((Map) data.get("lanes")).values()){
+                this.lanes[i] = new Lane((Map) laneData);
+                i++;
+            }
         }
 
     }
@@ -126,6 +149,9 @@ public class Match {
     }
 
     public void addAction (IAction action){
+        if (pendingActions == null){
+            pendingActions = new Stack<>();
+        }
         pendingActions.push(action);
     }
 
@@ -152,6 +178,13 @@ public class Match {
             match.put("slavePlayer", slavePlayer.serialize());
         }
 
+        List<Object> actions = new ArrayList<>();
+        if (pendingActions != null){
+            for (int i = 0; i < pendingActions.size(); i++){
+                actions.add(pendingActions.get(i).serialize());
+            }
+        }
+        match.put("pendingActions", actions);
 
         match.put("tick", tick);
 
@@ -176,6 +209,12 @@ public class Match {
         s += "\n\tmasterPlayerUsername:\t" + masterPlayer.getUsername();
         s += "\n\tslavePlayerID:\t\t\t" + slavePlayer.getUsername();
         s += "\n\tslavePlayerUsername:\t" + slavePlayer.getUsername();
+        if (lanes != null){
+            s += "\n\tmatches:\t" + lanes.toString();
+        }
+        else{
+            s += "\n\tmatches:\tNULL";
+        }
         s += "\n--------------------\n";
 
         return s;
