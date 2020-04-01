@@ -1,8 +1,11 @@
 package com.mygdx.game.models;
 
+import com.mygdx.game.models.actions.IAction;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 public class Match {
 
@@ -23,9 +26,14 @@ public class Match {
 
     private Status status;
 
+    private int tick;
+
+    private Stack<IAction> pendingActions;
+
     public Match(Player masterPlayer){
         this.masterPlayer = masterPlayer;
         this.status = Status.OPEN;
+        pendingActions = new Stack<>();
     }
 
     public Match(Map data){
@@ -48,6 +56,7 @@ public class Match {
                 new Lane("lane3")
         };
         status = Status.STARTED;
+        tick = 1;
     }
 
     public void setId(String id) {
@@ -85,6 +94,14 @@ public class Match {
         this.status = status;
     }
 
+    public void setTick(int tick){
+        this.tick = tick;
+    }
+
+    public int getTick(){
+        return tick;
+    }
+
     public void update(Map data){
         // Slave player
         if (slavePlayer == null && data.containsKey("slavePlayer")){
@@ -100,6 +117,16 @@ public class Match {
             }
         }
 
+    }
+
+    public void performPendingActions(){
+        for (int i = 0; i < pendingActions.size(); i++){
+            pendingActions.pop().perform(this);
+        }
+    }
+
+    public void addAction (IAction action){
+        pendingActions.push(action);
     }
 
     public Lane[] getLanes() {
@@ -124,6 +151,10 @@ public class Match {
         if (slavePlayer != null){
             match.put("slavePlayer", slavePlayer.serialize());
         }
+
+
+        match.put("tick", tick);
+
 
         if (lanes != null){
             Map<String, Object> lanesMap = new HashMap<>();

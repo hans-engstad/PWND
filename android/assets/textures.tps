@@ -181,8 +181,8 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">../../../../../Utvikling/Unity/New Unity Project/Assets/Area730/Ultimate Game UI/Sliced/BUTTONS 6/blue_big_but_frame.png</key>
-            <key type="filename">../../../../../Utvikling/Unity/New Unity Project/Assets/Area730/Ultimate Game UI/Sliced/BUTTONS 6/light_blue_big_but_frame.png</key>
+            <key type="filename">sprites/blue_big_but_frame.png</key>
+            <key type="filename">sprites/light_blue_big_but_frame.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -197,7 +197,37 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">../../../../../Utvikling/Unity/New Unity Project/Assets/Area730/Ultimate Game UI/Sliced/BUTTONS 6/red_big_but_frame.png</key>
+            <key type="filename">sprites/cell.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>25,25,50,50</rect>
+                <key>scale9Paddings</key>
+                <rect>25,25,50,50</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">sprites/pawn_1.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>20,20,40,40</rect>
+                <key>scale9Paddings</key>
+                <rect>20,20,40,40</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">sprites/red_big_but_frame.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -212,7 +242,7 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">../../../../../Utvikling/Unity/New Unity Project/Assets/Area730/Ultimate Game UI/Sliced/BUTTONS 6/yellow_big_but_frame.png</key>
+            <key type="filename">sprites/yellow_big_but_frame.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -230,10 +260,12 @@
         </map>
         <key>fileList</key>
         <array>
-            <filename>../../../../../Utvikling/Unity/New Unity Project/Assets/Area730/Ultimate Game UI/Sliced/BUTTONS 6/blue_big_but_frame.png</filename>
-            <filename>../../../../../Utvikling/Unity/New Unity Project/Assets/Area730/Ultimate Game UI/Sliced/BUTTONS 6/light_blue_big_but_frame.png</filename>
-            <filename>../../../../../Utvikling/Unity/New Unity Project/Assets/Area730/Ultimate Game UI/Sliced/BUTTONS 6/red_big_but_frame.png</filename>
-            <filename>../../../../../Utvikling/Unity/New Unity Project/Assets/Area730/Ultimate Game UI/Sliced/BUTTONS 6/yellow_big_but_frame.png</filename>
+            <filename>sprites/blue_big_but_frame.png</filename>
+            <filename>sprites/cell.png</filename>
+            <filename>sprites/light_blue_big_but_frame.png</filename>
+            <filename>sprites/pawn_1.png</filename>
+            <filename>sprites/red_big_but_frame.png</filename>
+            <filename>sprites/yellow_big_but_frame.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

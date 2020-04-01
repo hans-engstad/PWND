@@ -17,7 +17,7 @@ public class ButtonElement extends BaseElement {
         LIGHT_BLUE
     }
 
-    private float size;
+    private float fontSize;
     private Type type;
     private String text;
 
@@ -28,7 +28,7 @@ public class ButtonElement extends BaseElement {
 
     public ButtonElement(String text, ChangeListener onChange){
         // Set default parameters
-        size = 5f;
+        fontSize = 5f;
         type = Type.BLUE;
         style = new TextButton.TextButtonStyle();
         style.font = new BitmapFont();
@@ -51,7 +51,7 @@ public class ButtonElement extends BaseElement {
     @Override
     public void refresh(){
         button.setText(text);
-        button.getLabel().setFontScale(size, size);
+        button.getLabel().setFontScale(fontSize, fontSize);
         button.setStyle(style);
 
         if (onChange != null){
@@ -64,8 +64,8 @@ public class ButtonElement extends BaseElement {
         refresh();
     }
 
-    public void setSize(float size){
-        this.size = size;
+    public void setFontSize(float fontSize){
+        this.fontSize = fontSize;
         refresh();
     }
 
