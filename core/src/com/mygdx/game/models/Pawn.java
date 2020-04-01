@@ -52,6 +52,11 @@ public abstract class Pawn {
         return data;
     }
 
+    public String toString(){
+        return name;
+    }
+
+
 
 
 

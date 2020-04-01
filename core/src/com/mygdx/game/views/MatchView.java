@@ -75,7 +75,6 @@ public class MatchView extends BaseView {
         updateLaneSelection();
 
         drawBoard();
-        drawPawns();
         drawBottomBar();
 
         super.render(delta);
@@ -86,15 +85,18 @@ public class MatchView extends BaseView {
     void drawBoard(){
         Lane[] lanes = controller.getMatch().getLanes();
 
+
         for (int i = 0; i < lanes.length; i++){
             Lane lane = lanes[i];
             Boolean currentLaneSelected = lane == controller.getSelectedLane();
             for (int j = 0; j < lane.getCells().length; j++){
+                Cell cell = lane.getCell(j);
+                Pawn pawn = cell.getPawn();
 
                 int w = cellWidth;          // Width
                 int h = cellHeight;         // Height
-                int x = cellWidth * i;      // X-position
-                int y = (cellHeight * j) + BOTTOM_BAR_HEIGHT;     // Y-position
+                int x = cellWidth * (controller.getIsMaster() ? i : lanes.length - i - 1);      // X-position
+                int y = (((controller.getIsMaster() ? j : lane.getCells().length - j - 1)) * cellHeight) + BOTTOM_BAR_HEIGHT;     // Y-position
 
                 if (currentLaneSelected){
                     ImageElement image = new ImageElement("cell_selected", w, h, x, y);
@@ -105,33 +107,19 @@ public class MatchView extends BaseView {
                     stage.addActor(image.getActor());
                 }
 
-
-            }
-        }
-    }
-
-    void drawPawns(){
-        Lane[] lanes = controller.getMatch().getLanes();
-
-        for (int i = 0; i < lanes.length; i++){
-            Lane lane = lanes[i];
-            for (int j = 0; j < lane.getCells().length; j++){
-                Cell cell = lane.getCell(j);
-                Pawn pawn = cell.getPawn();
                 if (pawn != null){
-                    // Draw pawn image
-                    int w = cellWidth;          // Width
-                    int h = cellWidth;          // Height
-                    int x = cellWidth * i;      // X-position
-                    int y = (cellHeight * j) + BOTTOM_BAR_HEIGHT;     // Y-position
-
+                    // Draw pawn
                     ImageElement image = new ImageElement(pawn.getSpriteName(), w, h, x, y);
-
                     stage.addActor(image.getActor());
                 }
             }
         }
+
+
+
     }
+
+
 
     void drawBottomBar(){
         // TODO: Figure out why this is not working
@@ -184,7 +172,6 @@ public class MatchView extends BaseView {
                 controller.spawnBasicPawn();
                 // controller.setSelectedPawn(new BasicPawn());
             }
-
         }
 
 
@@ -195,6 +182,12 @@ public class MatchView extends BaseView {
         if (Gdx.input.justTouched()){
             int x = Gdx.input.getX();
             int y = screenHeight - Gdx.input.getY();
+
+            if (!controller.getIsMaster()){
+                // Flip positions
+                x = screenWidth - x;
+            }
+
             // Check if click is above bottom bar
             if (y > BOTTOM_BAR_HEIGHT){
                 // Check which lane was clicked and select that lane

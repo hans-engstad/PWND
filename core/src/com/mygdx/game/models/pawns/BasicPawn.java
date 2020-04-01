@@ -16,4 +16,6 @@ public class BasicPawn extends Pawn {
         this(PawnOwner.valueOf((String) data.get("owner")));
     }
 
+
+
 }

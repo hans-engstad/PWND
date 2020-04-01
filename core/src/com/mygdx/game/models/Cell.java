@@ -46,6 +46,12 @@ public class Cell {
         return this.pawn;
     }
 
-
+    public String toString(){
+        String s = "key=" + key;
+        if (pawn != null){
+            s += ", pawn=" + pawn.toString();
+        }
+        return s;
+    }
 
 }

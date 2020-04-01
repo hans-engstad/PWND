@@ -61,4 +61,12 @@ public class Lane {
         return lane;
     }
 
+    public String toString(){
+        String s = "";
+        for (Cell c : cells){
+            s += "\t{" + c.toString() + "}";
+        }
+        return s;
+    }
+
 }

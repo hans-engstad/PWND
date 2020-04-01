@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class MatchController extends BaseController {
 
-    private final float TICK_INTERVAL = 1000f;   // Time between ticks in ms
+    private final float TICK_INTERVAL = 3f;   // Time between ticks in seconds
 
     private MatchView view;
     private Boolean isMaster;   // Is this user the master user?
@@ -56,7 +56,7 @@ public class MatchController extends BaseController {
                     match.start();
 
                     // [TEST] - Add pawn to test rendering
-                    match.getLanes()[0].getCell(1).addPawn(new BasicPawn(Pawn.PawnOwner.MASTER));
+                    // match.getLanes()[0].getCell(1).addPawn(new BasicPawn(Pawn.PawnOwner.MASTER));
 
                     // This is the master user, start match
                     PWND.firebase.updateMatch(match);
@@ -70,6 +70,11 @@ public class MatchController extends BaseController {
 
     public void onMatchUpdate(Match newMatch){
         // Check if tick incremented in new match
+        if (match.getTick() > newMatch.getTick()){
+            // Local match is newer than newMatch.
+            // Don't update match
+            return;
+        }
         match = newMatch;
     }
 
@@ -109,6 +114,8 @@ public class MatchController extends BaseController {
         PWND.firebase.updateMatch(match);
     }
 
+    public Boolean getIsMaster(){ return isMaster; }
+
     public void setSelectedLane(Lane lane){
         selectedLane = lane;
     }
@@ -128,8 +135,10 @@ public class MatchController extends BaseController {
     public void render(float delta){
         timeSinceLastTick += delta;
         if(isMaster && timeSinceLastTick > TICK_INTERVAL){
+            // System.out.println("************************** UPDATE MATCH TICK");
             match.setTick(match.getTick() + 1);
             match.performPendingActions();
+            // System.out.println("New match" + match.toString());
             timeSinceLastTick = 0f;
             PWND.firebase.updateMatch(match);
         }

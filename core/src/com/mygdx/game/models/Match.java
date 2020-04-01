@@ -143,8 +143,12 @@ public class Match {
     }
 
     public void performPendingActions(){
+        System.out.println("PERFORM ACTIONS");
+        System.out.println("Actions size: " + pendingActions.size());
         for (int i = 0; i < pendingActions.size(); i++){
+            System.out.println("BEFORE: " + toString());
             pendingActions.pop().perform(this);
+            System.out.println("AFTER: " + toString());
         }
     }
 
@@ -210,10 +214,13 @@ public class Match {
         s += "\n\tslavePlayerID:\t\t\t" + slavePlayer.getUsername();
         s += "\n\tslavePlayerUsername:\t" + slavePlayer.getUsername();
         if (lanes != null){
-            s += "\n\tmatches:\t" + lanes.toString();
+            s += "\n\tlanes:\t";
+            for (Lane l : lanes){
+                s += "\n\t{" + l.toString() + "}";
+            }
         }
         else{
-            s += "\n\tmatches:\tNULL";
+            s += "\n\tlanes:\tNULL";
         }
         s += "\n--------------------\n";
 
