@@ -2,15 +2,15 @@ package com.mygdx.game.controllers;
 
 import com.mygdx.game.PWND;
 import com.mygdx.game.interfaces.IMatchChange;
-import com.mygdx.game.interfaces.IUpdateCallback;
-import com.mygdx.game.models.Cell;
+import com.mygdx.game.interfaces.IRetrieveCallback;
 import com.mygdx.game.models.Lane;
 import com.mygdx.game.models.Match;
 import com.mygdx.game.models.Pawn;
-import com.mygdx.game.models.actions.IAction;
 import com.mygdx.game.models.actions.SpawnPawnAction;
 import com.mygdx.game.models.pawns.BasicPawn;
 import com.mygdx.game.views.MatchView;
+
+import java.util.Map;
 
 public class MatchController extends BaseController {
 
@@ -25,60 +25,85 @@ public class MatchController extends BaseController {
     private float timeSinceLastTick;    // Time in ms since last tick
 
     private Match match;
+    private String matchKey;
 
-    public MatchController (MatchView view, Match match){
+    public MatchController (MatchView view, String matchKey){
         super();
         this.view = view;
-        this.match = match;
+        this.matchKey = matchKey;
         this.timeSinceLastTick = 0f;
-        this.isMaster = match.getMasterPlayer().getId().equals(getThisPlayer().getId());
 
-        PWND.firebase.addMatchChangeListener(match, new IMatchChange(){
+        fetchMatch();
+    }
+
+    void fetchMatch(){
+
+        PWND.firebase.retrieveMatch(matchKey, new IRetrieveCallback() {
             @Override
-            public void onChange(Match newMatch){
-                onMatchUpdate(newMatch);
+            public void onSuccess(Map data) {
+                match = new Match(data);
+                isMaster = match.getMasterPlayer().getId().equals(getThisPlayer().getId());
+
+                PWND.firebase.addMatchChangeListener(match, new IMatchChange(){
+                    @Override
+                    public void onChange(Match newMatch){
+                        onMatchUpdate(newMatch);
+                    }
+                });
+
+                // Start match if this is master player
+                if (isMaster){
+                    match.start();
+
+                    // [TEST] - Add pawn to test rendering
+                    match.getLanes()[0].getCell(1).addPawn(new BasicPawn(Pawn.PawnOwner.MASTER));
+
+                    // This is the master user, start match
+                    PWND.firebase.updateMatch(match);
+                }
             }
+
+            @Override
+            public void onFail(Exception e) {}
         });
-
-        // Start match if this is master player
-        if (isMaster){
-            match.start();
-
-            // [TEST] - Add pawn to test rendering
-            match.getLanes()[0].getCell(1).addPawn(new BasicPawn());
-
-            // This is the master user, start match
-            PWND.firebase.updateMatch(match);
-        }
     }
 
     public void onMatchUpdate(Match newMatch){
         // Check if tick incremented in new match
-        if (newMatch.getTick() > match.getTick()){
-            // New tick started
-            match.performPendingActions();
-        }
         match = newMatch;
-        System.out.println("New match: " + match.toString());
     }
 
-    public void spawnPawn(Pawn pawn, Lane lane){
+    public Match getMatch(){
+        return match;
+    }
 
-        if (pawn == null || lane == null){
-            System.out.println("Can't spawn pawn, given pawn and lane can't be null. ");
+    public void spawnBasicPawn(){
+        // TODO: Set lane selection in another way?
+
+        if (selectedLane == null){
+            System.out.println("Can't spawn pawn, selected lane can't be null. ");
+            return;
         }
 
-        // Find first cell in lane
-        int cellIndex = isMaster ? 0 : lane.getCells().length - 1;
+        if (match.getLanes() == null){
+            System.out.println("Can't spawn pawn, match do not have any lanes!");
+            System.out.println("Match" + match.toString());
+            return;
+        }
+
+
+        int cellIndex = isMaster ? 0 : selectedLane.getCells().length - 1;
         int laneIndex = -1;
         for (Lane l : match.getLanes()){
             laneIndex++;
-            if (l == lane){
+            if (l.getKey() == selectedLane.getKey()){
                 break;
             }
         }
 
+        Pawn pawn = new BasicPawn(isMaster ? Pawn.PawnOwner.MASTER : Pawn.PawnOwner.SLAVE);
         SpawnPawnAction action = new SpawnPawnAction(pawn, laneIndex, cellIndex);
+
         match.addAction(action);
 
         PWND.firebase.updateMatch(match);
@@ -104,6 +129,7 @@ public class MatchController extends BaseController {
         timeSinceLastTick += delta;
         if(isMaster && timeSinceLastTick > TICK_INTERVAL){
             match.setTick(match.getTick() + 1);
+            match.performPendingActions();
             timeSinceLastTick = 0f;
             PWND.firebase.updateMatch(match);
         }

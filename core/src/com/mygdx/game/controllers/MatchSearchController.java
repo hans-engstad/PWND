@@ -54,8 +54,6 @@ public class MatchSearchController extends BaseController {
 
                 if (match.getStatus() == Match.Status.STARTING){
                     // Join match by navigating to match view
-                    // PWND.viewManager.set(new MatchView(match));
-                    // PWND.viewManager.set(new MenuView());
                     joinMatch = true;
                 }
             }
@@ -86,10 +84,7 @@ public class MatchSearchController extends BaseController {
                     PWND.firebase.updateMatch(MatchSearchController.this.match, new IUpdateCallback() {
                         @Override
                         public void onSuccess() {
-                            // Join match by navigating to match view
-                            Match m = MatchSearchController.this.match;
-                            // PWND.viewManager.set(new MatchView(m));
-                            // PWND.viewManager.set(new MenuView());
+                            // Join match by setting join flag to true
                             joinMatch = true;
                         }
 
@@ -103,8 +98,6 @@ public class MatchSearchController extends BaseController {
                     // No open matches, create new match
                     createMatch();
                 }
-
-                System.out.println("MATCHES\n" + data.toString());
             }
 
             @Override
@@ -116,7 +109,7 @@ public class MatchSearchController extends BaseController {
 
     public void update(float delta){
         if (joinMatch){
-            PWND.viewManager.set(new MatchView(match));
+            PWND.viewManager.set(new MatchView(match.getId()));
         }
     }
 }

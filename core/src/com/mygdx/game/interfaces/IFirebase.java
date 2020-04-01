@@ -13,6 +13,8 @@ public interface IFirebase {
 
     void retrieveOpenMatches(IRetrieveCallback callback);
 
+    void retrieveMatch(String key, IRetrieveCallback callback);
+
     void addMatchChangeListener(Match match, IMatchChange callback);
 
 

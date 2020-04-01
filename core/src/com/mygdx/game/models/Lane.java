@@ -21,6 +21,21 @@ public class Lane {
         };
     }
 
+    public Lane(Map<String, Object> data){
+
+        this.key = (String) data.get("key");
+
+        if (data.containsKey("cells")){
+            this.cells = new Cell[((Map) data.get("cells")).size()];
+
+            int i = 0;
+            for (Object cellData : ((Map) data.get("cells")).values()){
+                this.cells[i] = new Cell((Map) cellData);
+                i++;
+            }
+        }
+    }
+
     public Cell getCell(int index){
         return cells[index];
     }
@@ -45,4 +60,5 @@ public class Lane {
         lane.put("cells", cellsMap);
         return lane;
     }
+
 }
