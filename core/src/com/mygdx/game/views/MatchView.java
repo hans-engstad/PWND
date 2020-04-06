@@ -26,6 +26,12 @@ public class MatchView extends BaseView {
 
     private Boolean setupComplete;
 
+    private int menuButtonWidth;
+    private int menuButtonHeight;
+    private int menuButtonx;
+    private int menuButtony;
+
+
 
     public MatchView (String matchKey){
         controller = new MatchController(this, matchKey);
@@ -64,6 +70,9 @@ public class MatchView extends BaseView {
         }
         if (!setupComplete && controller.getMatch().getStatus() == Match.Status.STARTED){
             setup();
+        }
+        if (!setupComplete && controller.getMatch().getStatus() == Match.Status.DONE) {
+            drawMatchDone();
         }
         if (controller.getMatch().getLanes() == null || controller.getMatch().getLanes().length == 0){
             return;
@@ -210,5 +219,30 @@ public class MatchView extends BaseView {
                 }
             }
         }
+    }
+
+    void drawMatchDone(){
+        //display Winner/Loser
+        // if player=loser
+        //ImageElement image = new ImageElement("victory.png",screenWidth/2,screenHeight/2,0,0);
+        // if player=winner
+        ImageElement GameOver = new ImageElement("GameOver.png",screenWidth/2,screenHeight/2,0,0);
+        //display back to menu button
+        menuButtonWidth = screenWidth/2;
+        menuButtonHeight = screenHeight/2;
+        menuButtonx = screenWidth/4;
+        menuButtony = screenHeight/4;
+        ImageElement MenuButton = new ImageElement("ButtonMainmenu.png",menuButtonWidth,menuButtonHeight,menuButtonx,menuButtony);
+        //check if button has been pressed
+        if (Gdx.input.justTouched()){
+            int x = Gdx.input.getX();
+            int y = screenHeight - Gdx.input.getY();
+
+            if (x >= menuButtonx+menuButtonWidth && x <= menuButtonx && y >= menuButtony-menuButtonHeight && y <= menuButtonHeight ){
+                //back to menu
+            }
+
+        }
+
     }
 }

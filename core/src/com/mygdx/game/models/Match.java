@@ -15,7 +15,7 @@ public class Match {
         OPEN,       // Open but not yet started
         STARTING,   // Waiting for both players to join
         STARTED,    // Game is started
-        DONE;       // Game is done
+        DONE,       // Game is done
     }
 
     private Lane[] lanes;
@@ -198,6 +198,18 @@ public class Match {
         }
 
         return match;
+    }
+
+    public void done(){
+        for (int i = 0; i < lanes.length; i++) {//testing every last cell of every lane
+            Lane lane = lanes[i];
+            Cell cell = lane.getCell(lane.getCells().length);
+            Pawn pawn = cell.getPawn();
+            if (pawn != null) {
+                //if one player has won
+                status = Status.DONE;
+            }
+        }
     }
 
 
