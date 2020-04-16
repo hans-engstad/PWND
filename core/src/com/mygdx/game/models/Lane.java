@@ -44,6 +44,14 @@ public class Lane {
         return cells;
     }
 
+    public Cell[] getCellsFlipped () {
+        Cell[] cells = new Cell[this.cells.length];
+        for (int i = 0; i < cells.length; i++){
+            cells[i] = this.cells[cells.length - i - 1];
+        }
+        return cells;
+    }
+
     public String getKey(){
         return this.key;
     }

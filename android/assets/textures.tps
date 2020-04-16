@@ -181,6 +181,36 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">sprites/ButtonMainmenu.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>47,11,95,21</rect>
+                <key>scale9Paddings</key>
+                <rect>47,11,95,21</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">sprites/GameOver.PNG</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>181,103,362,207</rect>
+                <key>scale9Paddings</key>
+                <rect>181,103,362,207</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">sprites/blue_big_but_frame.png</key>
             <key type="filename">sprites/light_blue_big_but_frame.png</key>
             <struct type="IndividualSpriteSettings">
@@ -198,6 +228,7 @@
                 <false/>
             </struct>
             <key type="filename">sprites/cell.png</key>
+            <key type="filename">sprites/cell_selected.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -213,6 +244,8 @@
                 <false/>
             </struct>
             <key type="filename">sprites/pawn_1.png</key>
+            <key type="filename">sprites/pawn_2.png</key>
+            <key type="filename">sprites/pawn_3.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -242,6 +275,36 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">sprites/square_red_but_frame.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>58,56,115,111</rect>
+                <key>scale9Paddings</key>
+                <rect>58,56,115,111</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">sprites/victory.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>32,9,65,18</rect>
+                <key>scale9Paddings</key>
+                <rect>32,9,65,18</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">sprites/yellow_big_but_frame.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -260,11 +323,18 @@
         </map>
         <key>fileList</key>
         <array>
+            <filename>sprites/ButtonMainmenu.png</filename>
+            <filename>sprites/GameOver.PNG</filename>
             <filename>sprites/blue_big_but_frame.png</filename>
             <filename>sprites/cell.png</filename>
+            <filename>sprites/cell_selected.png</filename>
             <filename>sprites/light_blue_big_but_frame.png</filename>
             <filename>sprites/pawn_1.png</filename>
+            <filename>sprites/pawn_2.png</filename>
+            <filename>sprites/pawn_3.png</filename>
             <filename>sprites/red_big_but_frame.png</filename>
+            <filename>sprites/square_red_but_frame.png</filename>
+            <filename>sprites/victory.png</filename>
             <filename>sprites/yellow_big_but_frame.png</filename>
         </array>
         <key>ignoreFileList</key>

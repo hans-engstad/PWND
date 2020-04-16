@@ -1,6 +1,7 @@
 package com.mygdx.game.views;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
@@ -14,7 +15,7 @@ import com.mygdx.game.views.UI.ImageElement;
 public class MatchView extends BaseView {
 
     private final int BOTTOM_BAR_HEIGHT = 200;  // Height in pixels of bottom UI bar
-    private final int SPAWN_PAWN_BUTTON_WIDTH = 300;
+    private final int SPAWN_PAWN_BUTTON_WIDTH = 200;
 
     private MatchController controller;
 
@@ -25,12 +26,6 @@ public class MatchView extends BaseView {
     private int cellHeight;
 
     private Boolean setupComplete;
-
-    private int menuButtonWidth;
-    private int menuButtonHeight;
-    private int menuButtonx;
-    private int menuButtony;
-
 
 
     public MatchView (String matchKey){
@@ -71,9 +66,7 @@ public class MatchView extends BaseView {
         if (!setupComplete && controller.getMatch().getStatus() == Match.Status.STARTED){
             setup();
         }
-        if (!setupComplete && controller.getMatch().getStatus() == Match.Status.DONE) {
-            drawMatchDone();
-        }
+
         if (controller.getMatch().getLanes() == null || controller.getMatch().getLanes().length == 0){
             return;
         }
@@ -93,12 +86,13 @@ public class MatchView extends BaseView {
     }
 
     void drawBoard(){
-        Lane[] lanes = controller.getMatch().getLanes();
+        Lane[] lanes = controller.getIsMaster() ? controller.getMatch().getLanes() : controller.getMatch().getLanesFlipped();
 
         for (int i = 0; i < lanes.length; i++){
             Lane lane = lanes[i];
             Boolean currentLaneSelected = lane == controller.getSelectedLane();
-            for (int j = 0; j < lane.getCells().length; j++){
+            Cell[] cells = controller.getIsMaster() ? lane.getCells() : lane.getCellsFlipped();
+            for (int j = 0; j < cells.length; j++){
 
                 int w = cellWidth;          // Width
                 int h = cellHeight;         // Height
@@ -113,19 +107,18 @@ public class MatchView extends BaseView {
                     ImageElement image = new ImageElement("cell", w, h, x, y);
                     stage.addActor(image.getActor());
                 }
-
-
             }
         }
     }
 
     void drawPawns(){
-        Lane[] lanes = controller.getMatch().getLanes();
+        Lane[] lanes = controller.getIsMaster() ? controller.getMatch().getLanes() : controller.getMatch().getLanesFlipped();
 
         for (int i = 0; i < lanes.length; i++){
             Lane lane = lanes[i];
-            for (int j = 0; j < lane.getCells().length; j++){
-                Cell cell = lane.getCell(j);
+            Cell[] cells = controller.getIsMaster() ? lane.getCells() : lane.getCellsFlipped();
+            for (int j = 0; j < cells.length; j++){
+                Cell cell = cells[j];
                 Pawn pawn = cell.getPawn();
                 if (pawn != null){
                     // Draw pawn image
@@ -135,6 +128,13 @@ public class MatchView extends BaseView {
                     int y = (cellHeight * j) + BOTTOM_BAR_HEIGHT;     // Y-position
 
                     ImageElement image = new ImageElement(pawn.getSpriteName(), w, h, x, y);
+
+                    // Flip pawn image if pawn belongs to other player
+                    if (pawn.isMaster() != controller.getIsMaster()){
+                        Actor imageActor = image.getActor();
+                        imageActor.setOrigin(cellWidth / 2, cellHeight / 2);
+                        imageActor.rotateBy(180f);
+                    }
 
                     stage.addActor(image.getActor());
                 }
@@ -172,14 +172,21 @@ public class MatchView extends BaseView {
         table.setSize(screenWidth, BOTTOM_BAR_HEIGHT);
         table.align(Align.left);
 
-        ImageElement spawnPawnButtonFrame = new ImageElement("square_red_but_frame", BOTTOM_BAR_HEIGHT, BOTTOM_BAR_HEIGHT, 0, 0);
-        ImageElement spawnPawnButtonPawn = new ImageElement("pawn_1", BOTTOM_BAR_HEIGHT - 40, BOTTOM_BAR_HEIGHT - 40, 20, 20);
+        String[] pawnSprites = new String[] { "pawn_1", "pawn_2", "pawn_3" };
+        int[] pawnHealths = new int[]{ 1, 2, 3 };
+        int[] pawnAttacks = new int[]{ 1, 2, 3 };
 
-        Group group = new Group();
-        group.addActor(spawnPawnButtonFrame.getActor());
-        group.addActor(spawnPawnButtonPawn.getActor());
+        for (int i = 0; i < pawnSprites.length; i++){
+            ImageElement spawnPawnButtonFrame = new ImageElement("square_red_but_frame", SPAWN_PAWN_BUTTON_WIDTH, BOTTOM_BAR_HEIGHT, 0, 0);
+            ImageElement spawnPawnButtonPawn = new ImageElement(pawnSprites[i], SPAWN_PAWN_BUTTON_WIDTH - 40, BOTTOM_BAR_HEIGHT - 40, 20, 20);
 
-        table.add(group).size(SPAWN_PAWN_BUTTON_WIDTH, BOTTOM_BAR_HEIGHT);
+            Group group = new Group();
+            group.addActor(spawnPawnButtonFrame.getActor());
+            group.addActor(spawnPawnButtonPawn.getActor());
+
+            table.add(group).size(SPAWN_PAWN_BUTTON_WIDTH, BOTTOM_BAR_HEIGHT);
+        }
+
 
         stage.addActor(table);
 
@@ -189,11 +196,11 @@ public class MatchView extends BaseView {
             int x = Gdx.input.getX();
             int y = screenHeight - Gdx.input.getY();
 
-            if (x >= 0 && x <= BOTTOM_BAR_HEIGHT && y >= 0 && y <= BOTTOM_BAR_HEIGHT ){
-                controller.spawnBasicPawn();
-                // controller.setSelectedPawn(new BasicPawn());
+            int index = x / BOTTOM_BAR_HEIGHT;
+            if (index >= 0 && index < pawnHealths.length && y >= 0 && y <= BOTTOM_BAR_HEIGHT ){
+                Pawn pawn = new Pawn(pawnHealths[index], pawnAttacks[index], controller.getIsMaster() ? Pawn.PawnOwner.MASTER : Pawn.PawnOwner.SLAVE);
+                controller.spawnPawn(pawn);
             }
-
         }
 
 
@@ -208,6 +215,9 @@ public class MatchView extends BaseView {
             if (y > BOTTOM_BAR_HEIGHT){
                 // Check which lane was clicked and select that lane
                 int laneIndex = x / cellWidth;
+                if (!controller.getIsMaster()){
+                    laneIndex = controller.getMatch().getLanes().length - laneIndex - 1;
+                }
                 Lane laneClicked = controller.getMatch().getLanes()[laneIndex];
                 if (controller.getSelectedLane() == laneClicked){
                     // Lane already selected clicked, deselect lane
@@ -221,28 +231,4 @@ public class MatchView extends BaseView {
         }
     }
 
-    void drawMatchDone(){
-        //display Winner/Loser
-        // if player=loser
-        //ImageElement image = new ImageElement("victory.png",screenWidth/2,screenHeight/2,0,0);
-        // if player=winner
-        ImageElement GameOver = new ImageElement("GameOver.png",screenWidth/2,screenHeight/2,0,0);
-        //display back to menu button
-        menuButtonWidth = screenWidth/2;
-        menuButtonHeight = screenHeight/2;
-        menuButtonx = screenWidth/4;
-        menuButtony = screenHeight/4;
-        ImageElement MenuButton = new ImageElement("ButtonMainmenu.png",menuButtonWidth,menuButtonHeight,menuButtonx,menuButtony);
-        //check if button has been pressed
-        if (Gdx.input.justTouched()){
-            int x = Gdx.input.getX();
-            int y = screenHeight - Gdx.input.getY();
-
-            if (x >= menuButtonx+menuButtonWidth && x <= menuButtonx && y >= menuButtony-menuButtonHeight && y <= menuButtonHeight ){
-                //back to menu
-            }
-
-        }
-
-    }
 }

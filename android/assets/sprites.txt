@@ -1,5 +1,5 @@
 sprites.png
-size: 817, 944
+size: 874, 1357
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
@@ -10,51 +10,86 @@ blue_big_but_frame
   orig: 585, 236
   offset: 0, 0
   index: -1
-cell
+ButtonMainmenu
   rotate: false
   xy: 585, 0
+  size: 189, 42
+  orig: 189, 42
+  offset: 0, 0
+  index: -1
+cell
+  rotate: false
+  xy: 774, 0
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
 cell_selected
   rotate: false
-  xy: 685, 0
+  xy: 0, 236
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
+GameOver
+  rotate: false
+  xy: 100, 236
+  size: 724, 413
+  orig: 724, 413
+  offset: 0, 0
+  index: -1
 light_blue_big_but_frame
   rotate: false
-  xy: 0, 236
+  xy: 0, 649
   size: 585, 236
   orig: 585, 236
   offset: 0, 0
   index: -1
 pawn
   rotate: false
-  xy: 585, 236
+  xy: 585, 649
   size: 80, 80
   orig: 80, 80
   offset: 0, 0
   index: 1
+pawn
+  rotate: false
+  xy: 665, 649
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: 2
+pawn
+  rotate: false
+  xy: 745, 649
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: 3
 red_big_but_frame
   rotate: false
-  xy: 0, 472
+  xy: 0, 885
   size: 587, 236
   orig: 587, 236
   offset: 0, 0
   index: -1
 square_red_but_frame
   rotate: false
-  xy: 587, 472
+  xy: 587, 885
   size: 230, 223
   orig: 230, 223
   offset: 0, 0
   index: -1
+victory
+  rotate: false
+  xy: 0, 1121
+  size: 129, 36
+  orig: 129, 36
+  offset: 0, 0
+  index: -1
 yellow_big_but_frame
   rotate: false
-  xy: 0, 708
+  xy: 129, 1121
   size: 588, 236
   orig: 588, 236
   offset: 0, 0

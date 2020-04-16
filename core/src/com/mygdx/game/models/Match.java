@@ -15,7 +15,9 @@ public class Match {
         OPEN,       // Open but not yet started
         STARTING,   // Waiting for both players to join
         STARTED,    // Game is started
-        DONE,       // Game is done
+        MASTER_WON, // Master player won the match
+        SLAVE_WON,  // Slave player won the match
+        TIE         // Tie between master and slave player
     }
 
     private Lane[] lanes;
@@ -159,6 +161,15 @@ public class Match {
         return lanes;
     }
 
+    public Lane[] getLanesFlipped(){
+        Lane[] lanes = new Lane[this.lanes.length];
+        for (int i = 0; i < lanes.length; i++){
+            // Add flipped cells to lane
+            lanes[i] = this.lanes[lanes.length - i - 1];
+        }
+        return lanes;
+    }
+
     public Map serialize(){
         Map<String, Object> match = new HashMap<>();
 
@@ -200,14 +211,97 @@ public class Match {
         return match;
     }
 
-    public void done(){
-        for (int i = 0; i < lanes.length; i++) {//testing every last cell of every lane
-            Lane lane = lanes[i];
-            Cell cell = lane.getCell(lane.getCells().length);
-            Pawn pawn = cell.getPawn();
-            if (pawn != null) {
-                //if one player has won
-                status = Status.DONE;
+    public Boolean masterWon (){
+        for (Lane lane : lanes){
+            Cell lastCell = lane.getCells()[lane.getCells().length - 1];
+            if (lastCell.getPawn() != null && lastCell.getPawn().owner == Pawn.PawnOwner.MASTER){
+                // Master won!
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Boolean slaveWon(){
+        for (Lane lane : lanes){
+            Cell lastCell = lane.getCells()[0];
+            if (lastCell.getPawn() != null && lastCell.getPawn().owner == Pawn.PawnOwner.SLAVE){
+                // Slave won!
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void movePawnsForward(){
+        // Perform fights
+        performFights();
+
+        // Move master pawns forward, after fight each master pawn should have an available cell in front
+        moveMasterPawnsForward();
+
+        // Perform fights again after master pawns moved forward
+        performFights();
+
+        // Move slave pawns forward
+        moveSlavePawnsForward();
+    }
+
+    private void moveMasterPawnsForward (){
+        for (Lane lane : lanes){
+            Cell[] cells = lane.getCells();
+
+            // Move master pawns forward
+            // Note: Iterating backwards to prevent pawns moving multiple times
+            for (int i = cells.length - 1; i >= 0; i--){
+                Cell cell = cells[i];
+                Pawn pawn = cell.getPawn();
+                if (pawn != null && pawn.owner == Pawn.PawnOwner.MASTER){
+                    cell.removePawn();
+                    cells[i + 1].addPawn(pawn);
+                }
+            }
+        }
+    }
+
+    private void moveSlavePawnsForward(){
+        for (Lane lane : lanes){
+            Cell[] cells = lane.getCells();
+
+            // Move slave pawns forward
+            for (int i = 0; i < cells.length; i++){
+                Cell cell = cells[i];
+                Pawn pawn = cell.getPawn();
+                if (pawn != null && pawn.owner == Pawn.PawnOwner.SLAVE){
+                    cell.removePawn();
+                    cells[i - 1].addPawn(pawn);
+                }
+            }
+        }
+    }
+
+    private void performFights(){
+        // Perform fights for all master pawns which have slave pawn in front
+        for (Lane lane : lanes){
+            Cell[] cells = lane.getCells();
+            for (int i = 0; i < cells.length; i++){
+                Pawn currentPawn = cells[i].getPawn();
+                Pawn pawnInFront = i == cells.length - 1 ? null : cells[i+1].getPawn();
+                if (currentPawn != null && currentPawn.isMaster() && pawnInFront != null && !pawnInFront.isMaster()){
+                    // Master pawn have slave pawn in front. Fight!
+                    while(currentPawn.getHealth() > 0 && pawnInFront.getHealth() > 0){
+                        currentPawn.decreaseHealth(pawnInFront.getAttack());
+                        pawnInFront.decreaseHealth(currentPawn.getAttack());
+                    }
+
+                    // Remove pawns with 0 health ("dead pawns")
+                    if (currentPawn.getHealth() <= 0){
+                        cells[i].removePawn();
+                    }
+                    if (pawnInFront.getHealth() <= 0){
+                        cells[i+1].removePawn();
+                    }
+                }
             }
         }
     }

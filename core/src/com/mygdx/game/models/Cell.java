@@ -46,6 +46,9 @@ public class Cell {
         return this.pawn;
     }
 
+    public void removePawn (){
+        this.pawn = null;
+    }
 
 
 }

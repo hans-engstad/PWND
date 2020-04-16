@@ -7,22 +7,21 @@ import com.mygdx.game.models.Lane;
 import com.mygdx.game.models.Match;
 import com.mygdx.game.models.Pawn;
 import com.mygdx.game.models.actions.SpawnPawnAction;
-import com.mygdx.game.models.pawns.BasicPawn;
+import com.mygdx.game.views.MatchDoneView;
 import com.mygdx.game.views.MatchView;
 
 import java.util.Map;
 
 public class MatchController extends BaseController {
 
-    private final float TICK_INTERVAL = 1000f;   // Time between ticks in ms
+    private final float TICK_INTERVAL = 5f;   // Time between ticks in seconds
 
     private MatchView view;
     private Boolean isMaster;   // Is this user the master user?
     private Lane selectedLane;
-    private Pawn selectedPawn;
 
 
-    private float timeSinceLastTick;    // Time in ms since last tick
+    private float timeSinceLastTick;    // Time in seconds since last tick
 
     private Match match;
     private String matchKey;
@@ -56,7 +55,7 @@ public class MatchController extends BaseController {
                     match.start();
 
                     // [TEST] - Add pawn to test rendering
-                    match.getLanes()[0].getCell(1).addPawn(new BasicPawn(Pawn.PawnOwner.MASTER));
+                    // match.getLanes()[0].getCell(1).addPawn(new BasicPawn(Pawn.PawnOwner.MASTER));
 
                     // This is the master user, start match
                     PWND.firebase.updateMatch(match);
@@ -69,7 +68,6 @@ public class MatchController extends BaseController {
     }
 
     public void onMatchUpdate(Match newMatch){
-        // Check if tick incremented in new match
         match = newMatch;
     }
 
@@ -77,9 +75,7 @@ public class MatchController extends BaseController {
         return match;
     }
 
-    public void spawnBasicPawn(){
-        // TODO: Set lane selection in another way?
-
+    public void spawnPawn(Pawn pawn){
         if (selectedLane == null){
             System.out.println("Can't spawn pawn, selected lane can't be null. ");
             return;
@@ -92,18 +88,16 @@ public class MatchController extends BaseController {
         }
 
 
-        int cellIndex = isMaster ? 0 : selectedLane.getCells().length - 1;
+        int cellIndex = isMaster ? 0 : match.getLanes()[0].getCells().length - 1;
         int laneIndex = -1;
         for (Lane l : match.getLanes()){
             laneIndex++;
-            if (l.getKey() == selectedLane.getKey()){
+            if (l.getKey().equals(selectedLane.getKey())){
                 break;
             }
         }
 
-        Pawn pawn = new BasicPawn(isMaster ? Pawn.PawnOwner.MASTER : Pawn.PawnOwner.SLAVE);
         SpawnPawnAction action = new SpawnPawnAction(pawn, laneIndex, cellIndex);
-
         match.addAction(action);
 
         PWND.firebase.updateMatch(match);
@@ -117,24 +111,66 @@ public class MatchController extends BaseController {
         return selectedLane;
     }
 
-    public void setSelectedPawn(Pawn pawn){
-        selectedPawn = pawn;
-    }
-
-    public Pawn getSelectedPawn(){
-        return selectedPawn;
-    }
+    public Boolean getIsMaster(){ return this.isMaster; }
 
     public void render(float delta){
+        updateMatchDone();
+
         timeSinceLastTick += delta;
-        if(isMaster && timeSinceLastTick > TICK_INTERVAL){
-            match.setTick(match.getTick() + 1);
-            match.performPendingActions();
-            timeSinceLastTick = 0f;
-            PWND.firebase.updateMatch(match);
+        if(isMaster && timeSinceLastTick > TICK_INTERVAL && match.getStatus() == Match.Status.STARTED){
+            incrementTick();
+        }
+    }
+
+    private void updateMatchDone (){
+        Match.Status status = match.getStatus();
+
+        if ((status == Match.Status.MASTER_WON && isMaster) || (status == Match.Status.SLAVE_WON && !isMaster)) {
+            // This player won
+            PWND.viewManager.set(new MatchDoneView(MatchDoneController.Status.WON));
+            return;
+        }
+        else if ((status == Match.Status.MASTER_WON && !isMaster) || (status == Match.Status.SLAVE_WON && isMaster)){
+            // This player lost
+            PWND.viewManager.set(new MatchDoneView(MatchDoneController.Status.LOST));
+            return;
+        }
+        else if (status == Match.Status.TIE) {
+            // Tie
+            PWND.viewManager.set(new MatchDoneView(MatchDoneController.Status.TIE));
+            return;
+        }
+    }
+
+    private void incrementTick(){
+        // Increment tick
+        match.setTick(match.getTick() + 1);
+
+        // Move pawns one step forward
+        match.movePawnsForward();
+
+        // Perform actions (Spawning of pawns)
+        match.performPendingActions();
+
+        // Check if master/slave won the match
+        if (match.masterWon() && match.slaveWon()){
+            // TIE
+            match.setStatus(Match.Status.TIE);
+        }
+        else if (match.masterWon()){
+            // MASTER WON
+            match.setStatus(Match.Status.MASTER_WON);
+        }
+        else if (match.slaveWon()) {
+            // SLAVE WON
+            match.setStatus(Match.Status.SLAVE_WON);
         }
 
+        // Reset tick timer
+        timeSinceLastTick = 0f;
 
+        // Update match in firebase database
+        PWND.firebase.updateMatch(match);
     }
 
 
